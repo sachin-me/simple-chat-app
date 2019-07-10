@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+		<link rel='stylesheet' href='/stylesheets/style.css' />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" />
+  </head>
+  <body>
+		<h2><%= title %></h2>
+		<div>
+			<ul class="msg-wrapper"></ul>
+		</div>
+		<div class="field">
+			<form action="" class="control msg-form">
+				<input class="input msg-input" type="text" placeholder="your message" />
+			</form>
+		</div>
+    <script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io();
+			
+			// selecting message form and Input field
+			const form = document.querySelector('.msg-form');
+			const input = document.querySelector('.msg-input');
+
+			const ul = document.querySelector('ul');
+
+		  function createMessage(e) {
+				e.preventDefault();
+				let value = input.value;
+				if (!value) return alert('No message found')
+				const currentUser = localStorage.user;
+				socket.emit('message', value, currentUser);
+				input.value = '';
+				return false;
+			}
+
+			socket.on('message', (msg) => {
+				let li = document.createElement('li');
+				let span = document.createElement('span');
+				span.innerText = msg;
+				li.appendChild(span)
+				ul.append(li);
+			})
+
+			// Adding event listener
+			form.addEventListener('submit', createMessage);
+		</script>
+  </body>
+</html>
